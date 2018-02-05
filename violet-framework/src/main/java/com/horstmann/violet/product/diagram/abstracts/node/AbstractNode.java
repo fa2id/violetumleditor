@@ -161,6 +161,10 @@ public abstract class AbstractNode implements INode
         }
         return connectedEdges;
     }
+    
+    public int getNumberOfEdges() {
+    	return getConnectedEdges().size();
+    }
 
     @Override
     public Point2D getLocation() {

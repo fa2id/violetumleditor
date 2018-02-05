@@ -30,9 +30,6 @@ public class ClassNodeBeanInfo extends ColorableNodeBeanInfo
         propertyDescriptorList.add(createPropertyDescriptor(ATTRIBUTES_VAR_NAME, ATTRIBUTES_LABEL_KEY, 2));
         propertyDescriptorList.add(createPropertyDescriptor(METHODS_VAR_NAME, METHODS_LABEL_KEY, 3));
         
-        // Add Relation
-        propertyDescriptorList.add(createPropertyDescriptor(RELATIONS_VAR_NAME, RELATIONS_LABEL_KEY, 4));
-
         return propertyDescriptorList;
     }
 
@@ -43,7 +40,4 @@ public class ClassNodeBeanInfo extends ColorableNodeBeanInfo
     private static final String NAME_VAR_NAME = "name";
     private static final String ATTRIBUTES_VAR_NAME = "attributes";
     private static final String METHODS_VAR_NAME = "methods";
-    
-    // Add Relation
-    private static final String RELATIONS_VAR_NAME = "relations";
 }

@@ -19,293 +19,247 @@ import com.horstmann.violet.product.diagram.property.text.SingleLineText;
 /**
  * A class node in a class diagram.
  */
-public class ClassNode extends ColorableNode
-{
+public class ClassNode extends ColorableNode {
 	/**
-     * Construct a class node with a default size
-     */
-    public ClassNode()
-    {
-        super();
-        name = new SingleLineText(NAME_CONVERTER);
-        name.setAlignment(LineText.LEFT);
-        attributes = new MultiLineText(PROPERTY_CONVERTER);
-        methods = new MultiLineText(PROPERTY_CONVERTER);
-        //Add Relation
-        relations = new SingleLineText(NAME_CONVERTER);
-        
-        createContentStructure();
-    }
+	 * Construct a class node with a default size
+	 */
+	public ClassNode() {
+		super();
+		name = new SingleLineText(NAME_CONVERTER);
+		name.setAlignment(LineText.LEFT);
+		attributes = new MultiLineText(PROPERTY_CONVERTER);
+		methods = new MultiLineText(PROPERTY_CONVERTER);
+		cbo = new SingleLineText(NAME_CONVERTER);
 
-    protected ClassNode(ClassNode node) throws CloneNotSupportedException
-    {
-        super(node);
-        name = node.name.clone();
-        attributes = node.attributes.clone();
-        methods = node.methods.clone();
-        
-        //Add Relation
-        relations = node.relations.clone();
-        
-        createContentStructure();
-    }
+		createContentStructure();
+	}
 
-    @Override
-    protected void beforeReconstruction()
-    {
-        super.beforeReconstruction();
+	protected ClassNode(ClassNode node) throws CloneNotSupportedException {
+		super(node);
+		name = node.name.clone();
+		attributes = node.attributes.clone();
+		methods = node.methods.clone();
+		cbo = node.cbo.clone();
 
-        if(null == name)
-        {
-            name = new SingleLineText();
-        }
-        if(null == attributes)
-        {
-            attributes = new MultiLineText();
-        }
-        if(null == methods)
-        {
-            methods = new MultiLineText();
-        }
-        // Add Relation    
-        if(null == relations)
-        {
-        	relations = new SingleLineText();
-        }
-        
-        
-        name.reconstruction(NAME_CONVERTER);
-        attributes.reconstruction(PROPERTY_CONVERTER);
-        methods.reconstruction(PROPERTY_CONVERTER);
-        name.setAlignment(LineText.CENTER);
-        
-        // Add Relation
-        relations.reconstruction(PROPERTY_CONVERTER);
-        relations.setAlignment(LineText.RIGHT);
-    }
+		createContentStructure();
+		runCbo();
+	}
 
-    @Override
-    protected INode copy() throws CloneNotSupportedException
-    {
-        return new ClassNode(this);
-    }
+	protected void runCbo() {
+		new Thread(() -> {
+			LineText cboText = new SingleLineText();
+			while (true) {
+				cboText.setText("CBO = " + String.valueOf(getNumberOfEdges()));
+				setCbo(cboText);
+			}
+		}).start();
+	}
 
-    @Override
-    protected void createContentStructure()
-    {
-        TextContent nameContent = new TextContent(name);
-        nameContent.setMinHeight(MIN_NAME_HEIGHT);
-        nameContent.setMinWidth(MIN_WIDTH);
-        TextContent attributesContent = new TextContent(attributes);
-        TextContent methodsContent = new TextContent(methods);
-        
-        // Add Relation
-        TextContent relationsContent = new TextContent(relations);
-        
+	@Override
+	protected void beforeReconstruction() {
+		super.beforeReconstruction();
 
-        VerticalLayout verticalGroupContent = new VerticalLayout();
-        verticalGroupContent.add(nameContent);
-        verticalGroupContent.add(attributesContent);
-        verticalGroupContent.add(methodsContent);
-        // Add Relation
-        verticalGroupContent.add(relationsContent);
-        
-        separator = new Separator.LineSeparator(getBorderColor());
-        verticalGroupContent.setSeparator(separator);
+		if (null == name) {
+			name = new SingleLineText();
+		}
+		if (null == attributes) {
+			attributes = new MultiLineText();
+		}
+		if (null == methods) {
+			methods = new MultiLineText();
+		}
+		if (null == cbo) {
+			cbo = new SingleLineText();
+		}
 
-        ContentInsideShape contentInsideShape = new ContentInsideRectangle(verticalGroupContent);
+		name.reconstruction(NAME_CONVERTER);
+		attributes.reconstruction(PROPERTY_CONVERTER);
+		methods.reconstruction(PROPERTY_CONVERTER);
+		name.setAlignment(LineText.CENTER);
+		cbo.reconstruction(NAME_CONVERTER);
+		cbo.setAlignment(LineText.CENTER);
+	}
 
-        setBorder(new ContentBorder(contentInsideShape, getBorderColor()));
-        setBackground(new ContentBackground(getBorder(), getBackgroundColor()));
-        setContent(getBackground());
+	@Override
+	protected INode copy() throws CloneNotSupportedException {
+		return new ClassNode(this);
+	}
 
-        setTextColor(super.getTextColor());
-    }
+	@Override
+	protected void createContentStructure() {
+		TextContent nameContent = new TextContent(name);
+		nameContent.setMinHeight(MIN_NAME_HEIGHT);
+		nameContent.setMinWidth(MIN_WIDTH);
+		TextContent attributesContent = new TextContent(attributes);
+		TextContent methodsContent = new TextContent(methods);
+		TextContent cboContent = new TextContent(cbo);
 
-    @Override
-    public void setBorderColor(Color borderColor)
-    {
-        if(null != separator)
-        {
-            separator.setColor(borderColor);
-        }
-        super.setBorderColor(borderColor);
-    }
+		VerticalLayout verticalGroupContent = new VerticalLayout();
+		verticalGroupContent.add(nameContent);
+		verticalGroupContent.add(attributesContent);
+		verticalGroupContent.add(methodsContent);
+		verticalGroupContent.add(cboContent);
 
-    @Override
-    public void setTextColor(Color textColor)
-    {
-        name.setTextColor(textColor);
-        attributes.setTextColor(textColor);
-        methods.setTextColor(textColor);
-        // Add Relation
-        relations.setTextColor(textColor);
-        super.setTextColor(textColor);
-    }
+		separator = new Separator.LineSeparator(getBorderColor());
+		verticalGroupContent.setSeparator(separator);
 
-    @Override
-    public String getToolTip()
-    {
-        return ClassDiagramConstant.CLASS_DIAGRAM_RESOURCE.getString("tooltip.class_node");
-    }
+		ContentInsideShape contentInsideShape = new ContentInsideRectangle(verticalGroupContent);
 
-    /**
-     * Sets the name property value.
-     * 
-     * @param newValue the class name
-     */
-    public void setName(LineText newValue)
-    {
-        name.setText(newValue);
-    }
+		setBorder(new ContentBorder(contentInsideShape, getBorderColor()));
+		setBackground(new ContentBackground(getBorder(), getBackgroundColor()));
+		setContent(getBackground());
 
-    /**
-     * Gets the name property value.
-     * 
-     * @return the class name
-     */
-    public LineText getName()
-    {
-        return name;
-    }
+		setTextColor(super.getTextColor());
+	}
 
-    /**
-     * Sets the attributes property value.
-     * 
-     * @param newValue the attributes of this class
-     */
-    public void setAttributes(LineText newValue)
-    {
-        attributes.setText(newValue);
-    }
+	@Override
+	public void setBorderColor(Color borderColor) {
+		if (null != separator) {
+			separator.setColor(borderColor);
+		}
+		super.setBorderColor(borderColor);
+	}
 
-    /**
-     * Gets the attributes property value.
-     * 
-     * @return the attributes of this class
-     */
-    public LineText getAttributes()
-    {
-        return attributes;
-    }
+	@Override
+	public void setTextColor(Color textColor) {
+		name.setTextColor(textColor);
+		attributes.setTextColor(textColor);
+		methods.setTextColor(textColor);
+		cbo.setTextColor(textColor);
+		super.setTextColor(textColor);
+	}
 
-    /**
-     * Sets the methods property value.
-     * 
-     * @param newValue the methods of this class
-     */
-    public void setMethods(LineText newValue)
-    {
-        methods.setText(newValue);
-    }
+	@Override
+	public String getToolTip() {
+		return ClassDiagramConstant.CLASS_DIAGRAM_RESOURCE.getString("tooltip.class_node");
+	}
 
-    /**
-     * Gets the methods property value.
-     * 
-     * @return the methods of this class
-     */
-    public LineText getMethods()
-    {
-        return methods;
-    }
-    
-    /**
-     * Sets the Relation property value.
-     * 
-     * @param newValue the class name
-     */
-    public void setRelations(LineText newValue)
-    {
-        relations.setText(newValue);
-    }
+	/**
+	 * Sets the name property value.
+	 * 
+	 * @param newValue
+	 *            the class name
+	 */
+	public void setName(LineText newValue) {
+		name.setText(newValue);
+	}
 
-    /**
-     * Gets the Relation property value.
-     * 
-     * @return the class name
-     */
-    public LineText getRelations()
-    {
-        return relations;
-    }
+	/**
+	 * Gets the name property value.
+	 * 
+	 * @return the class name
+	 */
+	public LineText getName() {
+		return name;
+	}
 
+	/**
+	 * Sets the attributes property value.
+	 * 
+	 * @param newValue
+	 *            the attributes of this class
+	 */
+	public void setAttributes(LineText newValue) {
+		attributes.setText(newValue);
+	}
 
-    private SingleLineText name;
-    private MultiLineText attributes;
-    private MultiLineText methods;
-    // Add Relation
-    private SingleLineText relations;
+	/**
+	 * Gets the attributes property value.
+	 * 
+	 * @return the attributes of this class
+	 */
+	public LineText getAttributes() {
+		return attributes;
+	}
 
-    private transient Separator separator;
+	/**
+	 * Sets the methods property value.
+	 * 
+	 * @param newValue
+	 *            the methods of this class
+	 */
+	public void setMethods(LineText newValue) {
+		methods.setText(newValue);
+	}
 
-    private static final int MIN_NAME_HEIGHT = 45;
-    private static final int MIN_WIDTH = 100;
-    private static final String STATIC = "<<static>>";
-    private static final String ABSTRACT = "«abstract»";
-    private static final String[][] SIGNATURE_REPLACE_KEYS = {
-            { "public ", "+ " },
-            { "package ", "~ " },
-            { "protected ", "# " },
-            { "private ", "- " },
-            { "property ", "/ " }
-    };
+	/**
+	 * Gets the methods property value.
+	 * 
+	 * @return the methods of this class
+	 */
+	public LineText getMethods() {
+		return methods;
+	}
 
-    private static final List<String> STEREOTYPES = Arrays.asList(
-    		"«Utility»",
-            "«Type»",
-            "«Metaclass»",
-            "«ImplementationClass»",
-            "«Focus»",
-            "«Entity»",
-            "«Control»",
-            "«Boundary»",
-            "«Auxiliary»",
-            ABSTRACT
-    );
+	/**
+	 * Sets the Relation property value.
+	 * 
+	 * @param newValue
+	 *            the class name
+	 */
+	public void setCbo(LineText newValue) {
+		cbo.setText(newValue);
+	}
 
-    private static final LineText.Converter NAME_CONVERTER = new LineText.Converter()
-    {
-        @Override
-        public OneLineText toLineString(String text)
-        {
-            OneLineText controlText = new OneLineText(text);
-            OneLineText lineString = new LargeSizeDecorator(controlText);
+	/**
+	 * Gets the Relation property value.
+	 * 
+	 * @return the class name
+	 */
+	public LineText getCbo() {
+		return cbo;
+	}
 
-            if(controlText.contains(ABSTRACT))
-            {
-                lineString = new ItalicsDecorator(lineString);
-            }
+	private SingleLineText name;
+	private MultiLineText attributes;
+	private MultiLineText methods;
+	private SingleLineText cbo;
 
-            for(String stereotype : STEREOTYPES)
-            {
-                if(controlText.contains(stereotype))
-                {
-                    lineString = new PrefixDecorator(new RemoveSentenceDecorator(
-                            lineString, stereotype), String.format("<center>%s</center>", stereotype)
-                    );
-                }
-            }
+	private transient Separator separator;
 
-            return lineString;
-        }
-    };
-    private static final LineText.Converter PROPERTY_CONVERTER = new LineText.Converter()
-    {
-        @Override
-        public OneLineText toLineString(String text)
-        {
-            OneLineText lineString = new OneLineText(text);
+	private static final int MIN_NAME_HEIGHT = 45;
+	private static final int MIN_WIDTH = 100;
+	private static final String STATIC = "<<static>>";
+	private static final String ABSTRACT = "«abstract»";
+	private static final String[][] SIGNATURE_REPLACE_KEYS = { { "public ", "+ " }, { "package ", "~ " },
+			{ "protected ", "# " }, { "private ", "- " }, { "property ", "/ " } };
 
-            if(lineString.contains(STATIC))
-            {
-                lineString = new UnderlineDecorator(new RemoveSentenceDecorator(lineString, STATIC));
-            }
-            for(String[] signature : SIGNATURE_REPLACE_KEYS)
-            {
-                lineString = new ReplaceSentenceDecorator(lineString, signature[0], signature[1]);
-            }
+	private static final List<String> STEREOTYPES = Arrays.asList("«Utility»", "«Type»", "«Metaclass»",
+			"«ImplementationClass»", "«Focus»", "«Entity»", "«Control»", "«Boundary»", "«Auxiliary»", ABSTRACT);
 
-            return lineString;
-        }
-    };
+	private static final LineText.Converter NAME_CONVERTER = new LineText.Converter() {
+		@Override
+		public OneLineText toLineString(String text) {
+			OneLineText controlText = new OneLineText(text);
+			OneLineText lineString = new LargeSizeDecorator(controlText);
+
+			if (controlText.contains(ABSTRACT)) {
+				lineString = new ItalicsDecorator(lineString);
+			}
+
+			for (String stereotype : STEREOTYPES) {
+				if (controlText.contains(stereotype)) {
+					lineString = new PrefixDecorator(new RemoveSentenceDecorator(lineString, stereotype),
+							String.format("<center>%s</center>", stereotype));
+				}
+			}
+
+			return lineString;
+		}
+	};
+	private static final LineText.Converter PROPERTY_CONVERTER = new LineText.Converter() {
+		@Override
+		public OneLineText toLineString(String text) {
+			OneLineText lineString = new OneLineText(text);
+
+			if (lineString.contains(STATIC)) {
+				lineString = new UnderlineDecorator(new RemoveSentenceDecorator(lineString, STATIC));
+			}
+			for (String[] signature : SIGNATURE_REPLACE_KEYS) {
+				lineString = new ReplaceSentenceDecorator(lineString, signature[0], signature[1]);
+			}
+
+			return lineString;
+		}
+	};
 }

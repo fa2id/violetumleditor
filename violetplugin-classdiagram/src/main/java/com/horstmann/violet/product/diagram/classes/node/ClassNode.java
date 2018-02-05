@@ -28,9 +28,12 @@ public class ClassNode extends ColorableNode
     {
         super();
         name = new SingleLineText(NAME_CONVERTER);
-        name.setAlignment(LineText.CENTER);
+        name.setAlignment(LineText.LEFT);
         attributes = new MultiLineText(PROPERTY_CONVERTER);
         methods = new MultiLineText(PROPERTY_CONVERTER);
+        //Add Relation
+        relations = new SingleLineText(NAME_CONVERTER);
+        
         createContentStructure();
     }
 
@@ -40,6 +43,10 @@ public class ClassNode extends ColorableNode
         name = node.name.clone();
         attributes = node.attributes.clone();
         methods = node.methods.clone();
+        
+        //Add Relation
+        relations = node.relations.clone();
+        
         createContentStructure();
     }
 
@@ -60,10 +67,21 @@ public class ClassNode extends ColorableNode
         {
             methods = new MultiLineText();
         }
+        // Add Relation    
+        if(null == relations)
+        {
+        	relations = new SingleLineText();
+        }
+        
+        
         name.reconstruction(NAME_CONVERTER);
         attributes.reconstruction(PROPERTY_CONVERTER);
         methods.reconstruction(PROPERTY_CONVERTER);
         name.setAlignment(LineText.CENTER);
+        
+        // Add Relation
+        relations.reconstruction(PROPERTY_CONVERTER);
+        relations.setAlignment(LineText.RIGHT);
     }
 
     @Override
@@ -80,11 +98,18 @@ public class ClassNode extends ColorableNode
         nameContent.setMinWidth(MIN_WIDTH);
         TextContent attributesContent = new TextContent(attributes);
         TextContent methodsContent = new TextContent(methods);
+        
+        // Add Relation
+        TextContent relationsContent = new TextContent(relations);
+        
 
         VerticalLayout verticalGroupContent = new VerticalLayout();
         verticalGroupContent.add(nameContent);
         verticalGroupContent.add(attributesContent);
         verticalGroupContent.add(methodsContent);
+        // Add Relation
+        verticalGroupContent.add(relationsContent);
+        
         separator = new Separator.LineSeparator(getBorderColor());
         verticalGroupContent.setSeparator(separator);
 
@@ -113,6 +138,8 @@ public class ClassNode extends ColorableNode
         name.setTextColor(textColor);
         attributes.setTextColor(textColor);
         methods.setTextColor(textColor);
+        // Add Relation
+        relations.setTextColor(textColor);
         super.setTextColor(textColor);
     }
 
@@ -181,17 +208,40 @@ public class ClassNode extends ColorableNode
     {
         return methods;
     }
+    
+    /**
+     * Sets the Relation property value.
+     * 
+     * @param newValue the class name
+     */
+    public void setRelations(LineText newValue)
+    {
+        relations.setText(newValue);
+    }
+
+    /**
+     * Gets the Relation property value.
+     * 
+     * @return the class name
+     */
+    public LineText getRelations()
+    {
+        return relations;
+    }
+
 
     private SingleLineText name;
     private MultiLineText attributes;
     private MultiLineText methods;
+    // Add Relation
+    private SingleLineText relations;
 
     private transient Separator separator;
 
     private static final int MIN_NAME_HEIGHT = 45;
     private static final int MIN_WIDTH = 100;
     private static final String STATIC = "<<static>>";
-    private static final String ABSTRACT = "Â«abstractÂ»";
+    private static final String ABSTRACT = "«abstract»";
     private static final String[][] SIGNATURE_REPLACE_KEYS = {
             { "public ", "+ " },
             { "package ", "~ " },
@@ -201,15 +251,15 @@ public class ClassNode extends ColorableNode
     };
 
     private static final List<String> STEREOTYPES = Arrays.asList(
-            "Â«UtilityÂ»",
-            "Â«TypeÂ»",
-            "Â«MetaclassÂ»",
-            "Â«ImplementationClassÂ»",
-            "Â«FocusÂ»",
-            "Â«EntityÂ»",
-            "Â«ControlÂ»",
-            "Â«BoundaryÂ»",
-            "Â«AuxiliaryÂ»",
+    		"«Utility»",
+            "«Type»",
+            "«Metaclass»",
+            "«ImplementationClass»",
+            "«Focus»",
+            "«Entity»",
+            "«Control»",
+            "«Boundary»",
+            "«Auxiliary»",
             ABSTRACT
     );
 

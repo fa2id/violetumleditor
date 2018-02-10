@@ -31,6 +31,7 @@ import javax.swing.JMenuItem;
 import com.horstmann.violet.application.gui.MainFrame;
 import com.horstmann.violet.framework.injection.resources.ResourceBundleInjector;
 import com.horstmann.violet.framework.injection.resources.annotation.ResourceBundleBean;
+import com.horstmann.violet.product.diagram.abstracts.AbstractGraph;
 import com.horstmann.violet.workspace.editorpart.IEditorPart;
 import com.horstmann.violet.workspace.editorpart.IEditorPartBehaviorManager;
 import com.horstmann.violet.workspace.editorpart.behavior.CutCopyPasteBehavior;
@@ -229,6 +230,30 @@ public class EditMenu extends JMenu
             }
         });
         this.add(selectPrevious);
+        
+        feature1.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent event)
+            {
+                if (isThereAnyWorkspaceDisplayed()) {
+                	AbstractGraph.isFeature1Enabled = 
+                    		AbstractGraph.isFeature1Enabled?false:true;
+                }
+            }
+        });
+        this.add(feature1);
+        
+        feature2.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent event)
+            {
+                if (isThereAnyWorkspaceDisplayed()) {
+                	AbstractGraph.isFeature2Enabled = 
+                    		AbstractGraph.isFeature2Enabled?false:true;
+                }
+            }
+        });
+        this.add(feature2);
 
     }
 
@@ -280,4 +305,10 @@ public class EditMenu extends JMenu
 
     @ResourceBundleBean(key = "edit.select_previous")
     private JMenuItem selectPrevious;
+    
+    @ResourceBundleBean(key = "edit.feature1")
+    private JMenuItem feature1;
+    
+    @ResourceBundleBean(key = "edit.feature2")
+    private JMenuItem feature2;
 }

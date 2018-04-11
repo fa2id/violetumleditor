@@ -208,6 +208,7 @@ public abstract class AbstractGraph implements Serializable, Cloneable, IGraph {
 		if (newNode instanceof NoteNode) {
 			newNode.setLocation(p);
 			nodes.add(newNode);
+			addNodeCopy(newNode);
 			return true;
 		}
 		// Case 2 : attached to an existing node_old
@@ -222,6 +223,7 @@ public abstract class AbstractGraph implements Serializable, Cloneable, IGraph {
 		newNode.setLocation(p);
 		newNode.setParent(null);
 		nodes.add(newNode);
+		addNodeCopy(newNode);
 		return true;
 	}
 
@@ -231,6 +233,7 @@ public abstract class AbstractGraph implements Serializable, Cloneable, IGraph {
 		for (INode aNodeToRemove : nodesToRemove) {
 			if (this.nodes.contains(aNodeToRemove)) {
 				this.nodes.remove(aNodeToRemove);
+				this.removeNodeCopy(aNodeToRemove);
 			}
 		}
 		// Step 1b : Remove node attach to other node as children
@@ -287,6 +290,7 @@ public abstract class AbstractGraph implements Serializable, Cloneable, IGraph {
 			if (null != start && start.addConnection(e)) {
 				e.setId(new Id());
 				edges.add(e);
+				addEdgeCopy(e);
 
 				start.onConnectedEdge(e);
 				if (end != null) {
@@ -331,6 +335,7 @@ public abstract class AbstractGraph implements Serializable, Cloneable, IGraph {
 			startingNode.removeConnection(anEdgeToRemove);
 			endingNode.removeConnection(anEdgeToRemove);
 			this.edges.remove(anEdgeToRemove);
+			this.removeEdgeCopy(anEdgeToRemove);
 		}
 	}
 
@@ -356,9 +361,27 @@ public abstract class AbstractGraph implements Serializable, Cloneable, IGraph {
 	public void setGridSticker(IGridSticker positionCorrector) {
 		this.gridSticker = positionCorrector;
 	}
-
+	
+	private void addNodeCopy(INode node) {
+		nodesCopy.add(node);
+	}
+	
+	private void addEdgeCopy(IEdge edge) {
+		edgesCopy.add(edge);
+	}
+	private void removeNodeCopy(INode node) {
+		nodesCopy.remove(node);
+	}
+	
+	private void removeEdgeCopy(IEdge edge) {
+		edgesCopy.remove(edge);
+	}
 	private ArrayList<INode> nodes;
 	private ArrayList<IEdge> edges;
 	private transient Rectangle2D minBounds;
 	private transient IGridSticker gridSticker;
+	
+	//For Testing
+	public static ArrayList<INode> nodesCopy = new ArrayList<>();
+	public static ArrayList<IEdge> edgesCopy = new ArrayList<>();
 }

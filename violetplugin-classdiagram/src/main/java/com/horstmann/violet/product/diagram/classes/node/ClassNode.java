@@ -54,6 +54,10 @@ public class ClassNode extends ColorableNode {
 			}
 		}).start();
 	}
+	
+	public int getCBO() {
+		return getNumberOfEdges();
+	}
 
 	@Override
 	protected void beforeReconstruction() {
@@ -220,12 +224,12 @@ public class ClassNode extends ColorableNode {
 	private static final int MIN_NAME_HEIGHT = 45;
 	private static final int MIN_WIDTH = 100;
 	private static final String STATIC = "<<static>>";
-	private static final String ABSTRACT = "«abstract»";
+	private static final String ABSTRACT = "ï¿½abstractï¿½";
 	private static final String[][] SIGNATURE_REPLACE_KEYS = { { "public ", "+ " }, { "package ", "~ " },
 			{ "protected ", "# " }, { "private ", "- " }, { "property ", "/ " } };
 
-	private static final List<String> STEREOTYPES = Arrays.asList("«Utility»", "«Type»", "«Metaclass»",
-			"«ImplementationClass»", "«Focus»", "«Entity»", "«Control»", "«Boundary»", "«Auxiliary»", ABSTRACT);
+	private static final List<String> STEREOTYPES = Arrays.asList("ï¿½Utilityï¿½", "ï¿½Typeï¿½", "ï¿½Metaclassï¿½",
+			"ï¿½ImplementationClassï¿½", "ï¿½Focusï¿½", "ï¿½Entityï¿½", "ï¿½Controlï¿½", "ï¿½Boundaryï¿½", "ï¿½Auxiliaryï¿½", ABSTRACT);
 
 	private static final LineText.Converter NAME_CONVERTER = new LineText.Converter() {
 		@Override
